@@ -1,7 +1,8 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EditorTools/Utils/ClassSelector.h"
 #include "GameFramework/Actor.h"
 #include "ExampleActor.generated.h"
 
@@ -11,15 +12,15 @@ class EDITORTOOLS_API AExampleActor : public AActor
 	GENERATED_BODY()
 	
 public:	
+	// Sets default values for this actor's properties
 	AExampleActor();
 
 protected:
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = Example)
-	FClassSelector ChildActorClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	UChildActorComponent* ChildActorComponent;
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 };
