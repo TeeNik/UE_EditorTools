@@ -59,7 +59,7 @@ bool FClassSelectorFilter::CheckUnloadedClass(const TSharedRef<const IUnloadedBl
 bool FClassSelectorFilter::CheckClassFilterFunction(const UClass* Class,
 	const TSharedPtr<IPropertyHandle> PropertyHandle, TObjectPtr<UObject> PropertyOwner) const
 {
-	FString FuncName = PropertyHandle->GetMetaData(TEXT("FilterFunc"));
+	FString FuncName = PropertyHandle->GetMetaData(TEXT("SelectorFunc"));
 	if (auto* Function = PropertyOwner->FindFunction(FName(FuncName)))
 	{
 		FClassSelectorParams Params;
@@ -138,7 +138,7 @@ void FClassSelectorCustomization::InitContent(TSharedRef<IPropertyHandle> InProp
 
 	ClassViewerOptions.ClassFilters.Reset();
 	const TSharedRef<FClassSelectorFilter> ViewFilter = MakeShared<FClassSelectorFilter>();
-	ViewFilter->BaseClass = PropertyHandle->GetClassMetaData(TEXT("FilterClass"));
+	ViewFilter->BaseClass = PropertyHandle->GetClassMetaData(TEXT("SelectorClass"));
 	ClassViewerOptions.ClassFilters.Add(ViewFilter);
 	ClassViewerOptions.PropertyHandle = PropertyHandle;
 	ClassViewerOptions.bShowNoneOption = true;

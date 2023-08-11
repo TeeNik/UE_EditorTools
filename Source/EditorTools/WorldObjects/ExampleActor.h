@@ -16,7 +16,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = Example)
+	UPROPERTY(EditAnywhere, Category = Example, meta = (SelectorClass = "ExampleOptionActor"))
 	FClassSelector ChildActorClass;
 
 	UPROPERTY(EditDefaultsOnly)
