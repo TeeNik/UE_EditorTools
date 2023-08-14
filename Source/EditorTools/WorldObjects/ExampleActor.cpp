@@ -9,5 +9,12 @@ AExampleActor::AExampleActor()
 void AExampleActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void AExampleActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	ChildActorComponent->SetChildActorClass(ChildActorClass);
+	ChildActorComponent->CreateChildActor();
 }
