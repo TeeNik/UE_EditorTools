@@ -5,6 +5,14 @@
 #include "GameFramework/Actor.h"
 #include "ExampleActor.generated.h"
 
+UENUM(BlueprintType)
+enum EExampleActorType
+{
+	Sphere,
+	Cube,
+	Cylinder
+};
+
 UCLASS()
 class EDITORTOOLS_API AExampleActor : public AActor
 {
@@ -19,6 +27,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Example, meta = (SelectorClass = "ExampleOptionActor"))
 	FClassSelector ChildActorClass;
+
+	UPROPERTY(EditAnywhere, Category = Example)
+	EExampleActorType Type;
 
 	UPROPERTY(EditDefaultsOnly)
 	UChildActorComponent* ChildActorComponent;
