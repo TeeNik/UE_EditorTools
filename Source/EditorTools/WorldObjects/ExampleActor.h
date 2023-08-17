@@ -24,8 +24,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+	UFUNCTION(CallInEditor)
+	void IsClassCompatible(FClassSelectorParams& Params);
 
-	UPROPERTY(EditAnywhere, Category = Example, meta = (SelectorClass = "ExampleOptionActor"))
+	UPROPERTY(EditAnywhere, Category = Example, meta = (SelectorClass = "ExampleOptionActor", SelectorFunc = "IsClassCompatible"))
 	FClassSelector ChildActorClass;
 
 	UPROPERTY(EditAnywhere, Category = Example)

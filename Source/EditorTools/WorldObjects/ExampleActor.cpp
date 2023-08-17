@@ -1,4 +1,5 @@
 #include "ExampleActor.h"
+#include "ExampleOptionActor.h"
 
 AExampleActor::AExampleActor()
 {
@@ -17,4 +18,15 @@ void AExampleActor::OnConstruction(const FTransform& Transform)
 
 	ChildActorComponent->SetChildActorClass(ChildActorClass);
 	ChildActorComponent->CreateChildActor();
+}
+
+void AExampleActor::IsClassCompatible(FClassSelectorParams& Params)
+{
+	if (Params.Class)
+	{
+		if (AExampleOptionActor* View = Cast<AExampleOptionActor>(Params.Class->GetDefaultObject()))
+		{
+			Params.Result = View->GetType() == Type;
+		}
+	}
 }
