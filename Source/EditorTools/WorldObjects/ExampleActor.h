@@ -6,7 +6,7 @@
 #include "ExampleActor.generated.h"
 
 UENUM(BlueprintType)
-enum EExampleActorType
+enum class EExampleActorType : uint8
 {
 	Sphere,
 	Cube,
