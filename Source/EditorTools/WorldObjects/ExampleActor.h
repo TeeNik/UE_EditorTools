@@ -24,6 +24,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+	
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+
 	UFUNCTION(CallInEditor)
 	void IsClassCompatible(FClassSelectorParams& Params);
 

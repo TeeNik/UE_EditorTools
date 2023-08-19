@@ -20,6 +20,19 @@ void AExampleActor::OnConstruction(const FTransform& Transform)
 	ChildActorComponent->CreateChildActor();
 }
 
+#if WITH_EDITOR
+void AExampleActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AExampleActor, Type))
+	{
+		ChildActorClass.Class = nullptr;
+		ChildActorComponent->SetChildActorClass(ChildActorClass);
+	}
+}
+#endif
+
 void AExampleActor::IsClassCompatible(FClassSelectorParams& Params)
 {
 	if (Params.Class)
