@@ -47,6 +47,7 @@ protected:
 
 	FClassViewerInitializationOptions ClassViewerOptions;
 	TObjectPtr<UClass> SelectedClass;
+	FPropertyAccess::Result PropertyHandleResult;
 
 	TSharedPtr<SComboButton> ComboButton;
 

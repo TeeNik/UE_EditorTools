@@ -171,10 +171,17 @@ FText FClassSelectorCustomization::GetDisplayValueAsString() const
 {
 	static bool bIsReentrant = false;
 	static const FText None = FText::FromString(TEXT("None"));
+	static const FText MultipleValues = FText::FromString(TEXT("MultipleValues"));
 
 	if (!bIsReentrant)
 	{
 		TGuardValue<bool> Guard(bIsReentrant, true);
+
+		if (PropertyHandleResult == FPropertyAccess::MultipleValues)
+		{
+			return MultipleValues;
+		}
+
 		if (SelectedClass)
 		{
 			return FText::FromString(SelectedClass.Get()->GetName());
@@ -204,10 +211,13 @@ void FClassSelectorCustomization::OnClear()
 void FClassSelectorCustomization::ImportValue()
 {
 	FString ValueStr;
-	PropertyHandle->GetValueAsFormattedString(ValueStr, PPF_None);
-	FClassSelector StructVal;
-	FClassSelector::StaticStruct()->ImportText(*ValueStr, &StructVal, nullptr, EPropertyPortFlags::PPF_None, nullptr, FClassSelector::StaticStruct()->GetName());
-	SelectedClass = StructVal.Class;
+	PropertyHandleResult = PropertyHandle->GetValueAsFormattedString(ValueStr, PPF_None);
+	if (PropertyHandleResult == FPropertyAccess::Success)
+	{
+		FClassSelector StructVal;
+		FClassSelector::StaticStruct()->ImportText(*ValueStr, &StructVal, nullptr, EPropertyPortFlags::PPF_None, nullptr, FClassSelector::StaticStruct()->GetName());
+		SelectedClass = StructVal.Class;
+	}
 }
 
 void FClassSelectorCustomization::ExportValue(UClass* InClass)
@@ -217,7 +227,7 @@ void FClassSelectorCustomization::ExportValue(UClass* InClass)
 	FClassSelector StructVal;
 	StructVal.Class = InClass;
 	FClassSelector::StaticStruct()->ExportText(ValueStr, &StructVal, &StructVal, nullptr, EPropertyPortFlags::PPF_None, nullptr);
-	PropertyHandle->SetValueFromFormattedString(ValueStr);
+	PropertyHandleResult = PropertyHandle->SetValueFromFormattedString(ValueStr);
 }
 
 void FClassSelectorCustomization::OnPropertyChanged()
