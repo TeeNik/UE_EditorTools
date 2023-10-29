@@ -1,7 +1,9 @@
 #include "EditorToolsEditor.h"
+#include "EditorTools/WorldObjects/SpotComponent.h"
 #include "Modules/ModuleManager.h"
 #include "Modules/ModuleInterface.h"
 #include "Utils/ClassSelectorCustomization.h"
+#include "Utils/SpotComponentVisualizer.h"
 
 DEFINE_LOG_CATEGORY(EditorToolsEditor)
 
@@ -10,6 +12,12 @@ DEFINE_LOG_CATEGORY(EditorToolsEditor)
 void FEditorToolsEditorModule::StartupModule()
 {
     UE_LOG(EditorToolsEditor, Warning, TEXT("FEditorToolsEditor: Log Started"));
+
+	if (GUnrealEd)
+	{
+		TSharedPtr<FSpotComponentVisualizer> Visualizer = MakeShareable(new FSpotComponentVisualizer());
+		GUnrealEd->RegisterComponentVisualizer(USpotComponent::StaticClass()->GetFName(), Visualizer);
+	}
 
 	// Register the details customizer
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
@@ -20,6 +28,11 @@ void FEditorToolsEditorModule::StartupModule()
 void FEditorToolsEditorModule::ShutdownModule()
 {
     UE_LOG(EditorToolsEditor, Warning, TEXT("FEditorToolsEditor: Log Ended"));
+
+	if (GUnrealEd)
+	{
+		GUnrealEd->UnregisterComponentVisualizer(USpotComponent::StaticClass()->GetFName());
+	}
 }
 
 #undef LOCTEXT_NAMESPACE
