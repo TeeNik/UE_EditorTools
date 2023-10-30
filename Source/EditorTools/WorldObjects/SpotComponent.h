@@ -14,5 +14,14 @@ class EDITORTOOLS_API USpotComponent : public USceneComponent
 
 public:	
 	USpotComponent();
+
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category = "Spot", meta = (DisplayName = "Color"))
+	FColor DEBUG_Color = FColor::Blue;
+
+	UPROPERTY(EditAnywhere, Category = "Spot", meta = (DisplayName = "Icon"))
+	TObjectPtr<UTexture2D> DEBUG_Icon;
+#endif
+
 		
 };
