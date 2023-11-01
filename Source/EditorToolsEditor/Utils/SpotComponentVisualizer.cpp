@@ -6,8 +6,6 @@ void FSpotComponentVisualizer::DrawVisualization(const UActorComponent* Componen
 	if (auto* SpotComponent = Cast<USpotComponent>(Component))
 	{
 		const FVector Location = SpotComponent->GetComponentLocation();
-		DrawWireSphere(PDI, Location, FColor::Yellow, 20, 16, SDPG_World);
-
 		const FMatrix Matrix = FScaleRotationTranslationMatrix(
 			SpotComponent->GetComponentScale(),
 			SpotComponent->GetComponentRotation(),
@@ -21,11 +19,12 @@ void FSpotComponentVisualizer::DrawVisualization(const UActorComponent* Componen
 		Icon = SpotComponent->DEBUG_Icon;
 #endif
 
+		DrawCircle(PDI, Location, SpotComponent->GetForwardVector(), SpotComponent->GetRightVector(), Color, 20, 16, SDPG_World, 2);
 		DrawDirectionalArrow(PDI, Matrix, Color, 50, 10, SDPG_World, 2);
 
 		if (Icon)
 		{
-			PDI->DrawSprite(Location, 50, 50, Icon->GetResource(), FColor::White, SDPG_Foreground, 
+			PDI->DrawSprite(Location, 35, 35, Icon->GetResource(), FColor::White, SDPG_Foreground, 
 				0, Icon->GetResource()->GetSizeX(), 0, Icon->GetResource()->GetSizeY(), SE_BLEND_Masked);
 		}
 	}

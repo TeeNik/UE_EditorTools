@@ -13,4 +13,10 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 
+private:
+    void RegisterComponentVisualizers();
+    void UnregisterComponentVisualizers();
+    void RegisterComponentVisualizer(FName ComponentClassName, TSharedPtr<FComponentVisualizer> Visualizer);
+
+    TArray<FName> RegisteredComponentClassNames;
 };

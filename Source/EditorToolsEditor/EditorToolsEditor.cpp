@@ -13,11 +13,7 @@ void FEditorToolsEditorModule::StartupModule()
 {
     UE_LOG(EditorToolsEditor, Warning, TEXT("FEditorToolsEditor: Log Started"));
 
-	if (GUnrealEd)
-	{
-		TSharedPtr<FSpotComponentVisualizer> Visualizer = MakeShareable(new FSpotComponentVisualizer());
-		GUnrealEd->RegisterComponentVisualizer(USpotComponent::StaticClass()->GetFName(), Visualizer);
-	}
+	RegisterComponentVisualizers();
 
 	// Register the details customizer
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
@@ -29,9 +25,37 @@ void FEditorToolsEditorModule::ShutdownModule()
 {
     UE_LOG(EditorToolsEditor, Warning, TEXT("FEditorToolsEditor: Log Ended"));
 
+	UnregisterComponentVisualizers();
+}
+
+void FEditorToolsEditorModule::RegisterComponentVisualizers()
+{
 	if (GUnrealEd)
 	{
-		GUnrealEd->UnregisterComponentVisualizer(USpotComponent::StaticClass()->GetFName());
+		RegisterComponentVisualizer(USpotComponent::StaticClass()->GetFName(), MakeShareable(new FSpotComponentVisualizer));
+	}
+}
+
+void FEditorToolsEditorModule::UnregisterComponentVisualizers()
+{
+	if (GUnrealEd)
+	{
+		for (const FName ClassName : RegisteredComponentClassNames)
+		{
+			GUnrealEd->UnregisterComponentVisualizer(ClassName);
+		}
+		RegisteredComponentClassNames.Empty();
+	}
+}
+
+void FEditorToolsEditorModule::RegisterComponentVisualizer(FName ComponentClassName, TSharedPtr<FComponentVisualizer> Visualizer)
+{
+	if (GUnrealEd && Visualizer.IsValid())
+	{
+		GUnrealEd->RegisterComponentVisualizer(ComponentClassName, Visualizer);
+		Visualizer->OnRegister();
+
+		RegisteredComponentClassNames.Add(ComponentClassName);
 	}
 }
 
