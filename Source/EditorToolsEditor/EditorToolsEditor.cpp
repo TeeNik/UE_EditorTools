@@ -1,4 +1,6 @@
 #include "EditorToolsEditor.h"
+#include "ISettingsModule.h"
+#include "EditorTools/Subsystems/ActorReplacementSettings.h"
 #include "EditorTools/WorldObjects/SpotComponent.h"
 #include "Modules/ModuleManager.h"
 #include "Modules/ModuleInterface.h"
@@ -19,6 +21,17 @@ void FEditorToolsEditorModule::StartupModule()
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout("ClassSelector", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FClassSelectorCustomization::MakeInstance));
 	PropertyModule.NotifyCustomizationModuleChanged();
+
+	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
+	{
+		SettingsModule->RegisterSettings(
+			"Project",
+			"EditorTools",
+			"Actor Replacement Settings",
+			LOCTEXT("ActorReplacementSettings", "Actor Replacement Settings"),
+			LOCTEXT("ActorReplacementSettingsDescription", "Configure Actor Replacement Settings"),
+			GetMutableDefault<UActorReplacementSettings>());
+	}
 }
 
 void FEditorToolsEditorModule::ShutdownModule()
