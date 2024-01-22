@@ -5,7 +5,7 @@
 
 
 UCLASS(Config = Editor, DefaultConfig)
-class EDITORTOOLS_API UActorReplacementSettings : public UObject
+class UActorReplacementSettings : public UObject
 {
 	GENERATED_BODY()
 

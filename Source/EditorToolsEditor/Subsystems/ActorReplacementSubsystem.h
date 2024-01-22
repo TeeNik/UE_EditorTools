@@ -6,7 +6,7 @@
 
 
 UCLASS()
-class EDITORTOOLS_API UActorReplacementSubsystem : public UEditorSubsystem
+class UActorReplacementSubsystem : public UEditorSubsystem
 {
 	GENERATED_BODY()
 
