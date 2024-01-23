@@ -28,9 +28,21 @@ public class EditorToolsEditor : ModuleRules
                 "Slate",
                 "SlateCore",
                 "EditorTools",
+                "PlacementMode",
+                "EditorSubsystem",
                 "ComponentVisualizers",
                 "GameplayTags",
                 "PropertyEditor",
+                "SkeletalMerging",
+                "EditorScriptingUtilities",
+                "SmartObjectsModule",
+                "Sequencer",
+                "MovieScene",
+                "MovieSceneTools",
+                "MovieSceneTracks",
+                "SmartObjectsEditorModule", 
+                "CustomizableObject",
+                "InputCore"
             }
         );
     }
