@@ -20,10 +20,12 @@ class EDITORTOOLS_API AExampleActor : public AActor
 	
 public:	
 	AExampleActor();
+	void SetChildActorClass(TObjectPtr<UClass> Class);
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+	//void TextCameraMove();
 	
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;

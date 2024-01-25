@@ -15,6 +15,6 @@ protected:
 	virtual void Deinitialize() override;
 
 	void OnNewActorsDropped(const TArray<UObject*>& DroppedObjects, const TArray<AActor*>& DroppedActors);
-	void ReplaceIActor(TSubclassOf<UObject> BlueprintGeneratedClass, AActor* ActorToReplace, const UClass* ClassToSpawn);
+	void ReplaceActor(TSubclassOf<UObject> BlueprintGeneratedClass, AActor* ActorToReplace, UClass* ClassToSpawn);
 
 };

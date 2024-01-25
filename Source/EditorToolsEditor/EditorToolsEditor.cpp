@@ -1,9 +1,9 @@
 #include "EditorToolsEditor.h"
 #include "ISettingsModule.h"
-#include "EditorTools/Subsystems/ActorReplacementSettings.h"
 #include "EditorTools/WorldObjects/SpotComponent.h"
 #include "Modules/ModuleManager.h"
 #include "Modules/ModuleInterface.h"
+#include "Subsystems/ActorReplacementSettings.h"
 #include "Utils/ClassSelectorCustomization.h"
 #include "Utils/SpotComponentVisualizer.h"
 

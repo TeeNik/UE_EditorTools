@@ -5,12 +5,14 @@
 
 void UActorReplacementSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	//FEditorDelegates::OnNewActorsDropped.AddUObject(this, &UActorReplacementSubsystem::OnNewActorsDropped);
+	FEditorDelegates::OnNewActorsDropped.AddUObject(this, &UActorReplacementSubsystem::OnNewActorsDropped);
+	UE_LOG(LogTemp, Log, TEXT("UActorReplacementSubsystem::Initialize"));
 }
 
 void UActorReplacementSubsystem::Deinitialize()
 {
-	//FEditorDelegates::OnNewActorsDropped.RemoveAll(this);
+	FEditorDelegates::OnNewActorsDropped.RemoveAll(this);
+	UE_LOG(LogTemp, Log, TEXT("UActorReplacementSubsystem::Deinitialize"));
 }
 
 void UActorReplacementSubsystem::OnNewActorsDropped(const TArray<UObject*>& DroppedObjects,	const TArray<AActor*>& DroppedActors)
@@ -26,14 +28,14 @@ void UActorReplacementSubsystem::OnNewActorsDropped(const TArray<UObject*>& Drop
 			{
 				if (Class->IsChildOf(Item.Key.LoadSynchronous()))
 				{
-					ReplaceIActor(Blueprint->GeneratedClass, DroppedActors[Idx], Item.Value.LoadSynchronous());
+					ReplaceActor(Blueprint->GeneratedClass, DroppedActors[Idx], Item.Value.LoadSynchronous());
 				}
 			}
 		}
 	}
 }
 
-void UActorReplacementSubsystem::ReplaceIActor(TSubclassOf<UObject> BlueprintGeneratedClass, AActor* ActorToReplace, const UClass* ClassToSpawn)
+void UActorReplacementSubsystem::ReplaceActor(TSubclassOf<UObject> BlueprintGeneratedClass, AActor* ActorToReplace, UClass* ClassToSpawn)
 {
 	if (!GEditor || !ClassToSpawn)
 	{
@@ -50,6 +52,7 @@ void UActorReplacementSubsystem::ReplaceIActor(TSubclassOf<UObject> BlueprintGen
 	{
 		if (AExampleActor* ExampleActor = Cast<AExampleActor>(OutNewActors[i]))
 		{
+			ExampleActor->SetChildActorClass(BlueprintGeneratedClass);
 		}
 	}
 }

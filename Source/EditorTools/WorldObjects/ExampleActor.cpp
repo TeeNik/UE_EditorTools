@@ -7,6 +7,31 @@ AExampleActor::AExampleActor()
 	ChildActorComponent->SetupAttachment(RootComponent);
 }
 
+void AExampleActor::SetChildActorClass(TObjectPtr<UClass> Class)
+{
+	if (Class->IsChildOf(AExampleOptionActor::StaticClass()))
+	{
+		ChildActorClass.Class = Class;
+		ChildActorComponent->SetChildActorClass(ChildActorClass);
+	}
+}
+
+//void AExampleActor::TextCameraMove()
+//{
+//	UE_LOG(LogTemp, Log, TEXT("Log TextCameraMove"));
+//
+//	if (GEditor)
+//	{
+//		if (FEditorViewportClient* Client = (FEditorViewportClient*)(GEditor->GetActiveViewport()->GetClient()))
+//		{
+//			FVector Drag(0, 0, 10);
+//			FRotator Rot(0, 0, 10);
+//			Client->MoveViewportCamera(Drag, Rot);
+//			UE_LOG(LogTemp, Log, TEXT("Found Client"));
+//		}
+//	}
+//}
+
 void AExampleActor::BeginPlay()
 {
 	Super::BeginPlay();
