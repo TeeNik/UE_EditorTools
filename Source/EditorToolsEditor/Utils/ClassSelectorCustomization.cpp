@@ -176,15 +176,18 @@ FText FClassSelectorCustomization::GetDisplayValueAsString() const
 	if (!bIsReentrant)
 	{
 		TGuardValue<bool> Guard(bIsReentrant, true);
-
-		if (PropertyHandleResult == FPropertyAccess::MultipleValues)
+		FString ValueStr;
+		const auto Result = PropertyHandle->GetValueAsFormattedString(ValueStr, PPF_None);
+		
+		if (Result == FPropertyAccess::MultipleValues)
 		{
 			return MultipleValues;
 		}
-
-		if (SelectedClass)
+		if (Result == FPropertyAccess::Success)
 		{
-			return FText::FromString(SelectedClass.Get()->GetName());
+			FClassSelector StructVal;
+			FClassSelector::StaticStruct()->ImportText(*ValueStr, &StructVal, nullptr, EPropertyPortFlags::PPF_None, nullptr, FClassSelector::StaticStruct()->GetName());
+			return FText::FromString(GetNameSafe(StructVal.Class));
 		}
 	}
 	return None;
@@ -192,9 +195,10 @@ FText FClassSelectorCustomization::GetDisplayValueAsString() const
 
 void FClassSelectorCustomization::OnBrowseTo()
 {
-	if (SelectedClass != NULL && SelectedClass->ClassGeneratedBy != NULL)
+	const auto Class = ImportValue();
+	if (Class != NULL && Class->ClassGeneratedBy != NULL)
 	{
-		if (UBlueprint* Blueprint = Cast<UBlueprint>(SelectedClass->ClassGeneratedBy))
+		if (UBlueprint* Blueprint = Cast<UBlueprint>(Class->ClassGeneratedBy))
 		{
 			TArray<UObject*> SyncObjects;
 			SyncObjects.Add(Blueprint);
@@ -208,26 +212,26 @@ void FClassSelectorCustomization::OnClear()
 	ExportValue(nullptr);
 }
 
-void FClassSelectorCustomization::ImportValue()
+TObjectPtr<UClass> FClassSelectorCustomization::ImportValue()
 {
 	FString ValueStr;
-	PropertyHandleResult = PropertyHandle->GetValueAsFormattedString(ValueStr, PPF_None);
-	if (PropertyHandleResult == FPropertyAccess::Success)
+	const auto Result = PropertyHandle->GetValueAsFormattedString(ValueStr, PPF_None);
+	if (Result == FPropertyAccess::Success)
 	{
 		FClassSelector StructVal;
 		FClassSelector::StaticStruct()->ImportText(*ValueStr, &StructVal, nullptr, EPropertyPortFlags::PPF_None, nullptr, FClassSelector::StaticStruct()->GetName());
-		SelectedClass = StructVal.Class;
+		return StructVal.Class;
 	}
+	return nullptr;
 }
 
 void FClassSelectorCustomization::ExportValue(UClass* InClass)
 {
-	SelectedClass = InClass;
 	FString ValueStr;
 	FClassSelector StructVal;
 	StructVal.Class = InClass;
 	FClassSelector::StaticStruct()->ExportText(ValueStr, &StructVal, &StructVal, nullptr, EPropertyPortFlags::PPF_None, nullptr);
-	PropertyHandleResult = PropertyHandle->SetValueFromFormattedString(ValueStr);
+	PropertyHandle->SetValueFromFormattedString(ValueStr);
 }
 
 void FClassSelectorCustomization::OnPropertyChanged()

@@ -40,15 +40,12 @@ protected:
 	void OnClassPicked(UClass* Class);
 	void OnBrowseTo();
 	void OnClear();
-	void ImportValue();
+	TObjectPtr<UClass> ImportValue();
 	void ExportValue(UClass* InClass);
 
 	void OnPropertyChanged();
 
 	FClassViewerInitializationOptions ClassViewerOptions;
-	TObjectPtr<UClass> SelectedClass;
-	FPropertyAccess::Result PropertyHandleResult;
-
 	TSharedPtr<SComboButton> ComboButton;
 
 	TObjectPtr<UObject> PropertyOwner;
