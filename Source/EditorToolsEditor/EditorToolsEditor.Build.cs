@@ -20,6 +20,10 @@ public class EditorToolsEditor : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
+                "EditorFramework",
+                "LevelEditor",
+                "EditorStyle",
+                "Projects",
                 "CoreUObject",
                 "Engine",
                 "UnrealEd",
