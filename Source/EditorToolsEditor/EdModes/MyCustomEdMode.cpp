@@ -26,6 +26,41 @@ void FMyCustomEdMode::ActorSelectionChangeNotify()
 	// @todo support selection change
 }
 
+bool FMyCustomEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag,
+	FRotator& InRot, FVector& InScale)
+{
+	
+	auto ViewTransform = InViewportClient->GetViewTransform();
+	FTransform Transform(ViewTransform.GetRotation(), ViewTransform.GetLocation());
+
+	FQuat NewQuat = ViewTransform.GetRotation().Quaternion() * FQuat(0,1,0,InRot.Yaw);
+
+	FRotator Roll(0, 0, 90);
+	Transform.Rotator() = Roll;
+	FRotator TestRot = Transform.InverseTransformRotation(FRotator(0, 10, 0).Quaternion()).Rotator();
+	TestRot = (Roll.Quaternion() * FQuat(FVector::UpVector, FMath::DegreesToRadians(10))).Rotator();
+	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::TestRot %s %s"), *TestRot.ToString(), *Roll.Quaternion().ToString());
+
+	FRotator FinalRot = (ViewTransform.GetRotation().Quaternion() * FQuat(FVector::UpVector, FMath::DegreesToRadians(InRot.Yaw))).Rotator();
+	FRotator DeltaRot = FinalRot - ViewTransform.GetRotation();
+	DeltaRot.Normalize();
+	
+	//InViewportClient->SetViewRotation(FinalRot);
+	
+	//FRotator NewRot(InRot.Pitch, InRot.Roll, InRot.Yaw);
+	InViewportClient->PeformDefaultCameraMovement(InDrag, DeltaRot, InScale);
+
+	FinalRot = (ViewTransform.GetRotation().Quaternion() * FQuat(FVector::ForwardVector, FMath::DegreesToRadians(InRot.Pitch))).Rotator();
+	DeltaRot = FinalRot - ViewTransform.GetRotation();
+	DeltaRot.Normalize();
+	InViewportClient->PeformDefaultCameraMovement(InDrag, DeltaRot, InScale);
+
+	
+	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputDelta %s %s"), *InDrag.ToString(), *InRot.ToString());
+	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::Transform %s %s"), *ViewTransform.GetRotation().ToString(), *Transform.GetRotation().Rotator().ToString());
+	return true;
+}
+
 void FMyCustomEdMode::Enter()
 {
 	FEdMode::Enter();

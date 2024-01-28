@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "EdMode.h"
 
-class EDITORTOOLSEDITOR_API FMyCustomEdMode : public FEdMode
+class EDITORTOOLSEDITOR_API FMyCustomEdMode : public FEdMode, public ILegacyEdModeViewportInterface
 {
 public:
 	const static FEditorModeID EM_MyCustomEditorModeId;
@@ -15,5 +15,7 @@ public:
 	
 	virtual void Enter() override;
 	virtual void ActorSelectionChangeNotify() override;
+	virtual bool InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag, FRotator& InRot, FVector& InScale) override;
+
 	
 };
