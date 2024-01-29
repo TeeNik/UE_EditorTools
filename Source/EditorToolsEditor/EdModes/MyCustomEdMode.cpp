@@ -29,6 +29,10 @@ void FMyCustomEdMode::ActorSelectionChangeNotify()
 bool FMyCustomEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag,
 	FRotator& InRot, FVector& InScale)
 {
+	if (InRot.IsNearlyZero())
+	{
+		return false;
+	}
 	
 	auto ViewTransform = InViewportClient->GetViewTransform();
 	FTransform Transform(ViewTransform.GetRotation(), ViewTransform.GetLocation());
@@ -50,7 +54,7 @@ bool FMyCustomEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewp
 	//FRotator NewRot(InRot.Pitch, InRot.Roll, InRot.Yaw);
 	InViewportClient->PeformDefaultCameraMovement(InDrag, DeltaRot, InScale);
 
-	FinalRot = (ViewTransform.GetRotation().Quaternion() * FQuat(FVector::ForwardVector, FMath::DegreesToRadians(InRot.Pitch))).Rotator();
+	FinalRot = (ViewTransform.GetRotation().Quaternion() * FQuat(FVector::LeftVector, FMath::DegreesToRadians(InRot.Pitch))).Rotator();
 	DeltaRot = FinalRot - ViewTransform.GetRotation();
 	DeltaRot.Normalize();
 	InViewportClient->PeformDefaultCameraMovement(InDrag, DeltaRot, InScale);
@@ -59,6 +63,32 @@ bool FMyCustomEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewp
 	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputDelta %s %s"), *InDrag.ToString(), *InRot.ToString());
 	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::Transform %s %s"), *ViewTransform.GetRotation().ToString(), *Transform.GetRotation().Rotator().ToString());
 	return true;
+}
+
+bool FMyCustomEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport* Viewport, FKey Key, EInputEvent Event)
+{
+	if (Event == IE_Repeat && Key == EKeys::E)
+	{
+		FVector Zero = FVector::Zero();
+		FRotator DeltaRoll = FRotator(0,0,FMath::DegreesToRadians(100));
+		ViewportClient->PeformDefaultCameraMovement(Zero, DeltaRoll, Zero);
+		UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputKey"));
+		return true;
+	}
+	if (Event == IE_Repeat && Key == EKeys::Q)
+	{
+		FVector Zero = FVector::Zero();
+		FRotator DeltaRoll = FRotator(0,0,FMath::DegreesToRadians(-100));
+		ViewportClient->PeformDefaultCameraMovement(Zero, DeltaRoll, Zero);
+		UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputKey"));
+		return true;
+	}
+	if (Event == IE_Pressed && Key == EKeys::R)
+	{
+		ViewportClient->SetViewRotation(FRotator::ZeroRotator);
+		return true;
+	}
+	return false;
 }
 
 void FMyCustomEdMode::Enter()
