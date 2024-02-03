@@ -164,10 +164,21 @@ bool FMyCustomEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport*
 	if (Event == IE_Pressed && Key == EKeys::M)
 	{
 		TArray<UObject*> SelectedActors;
-		GEditor->GetSelectedActors()->GetSelectedObjects( SelectedActors );
-		if (!SelectedActors.IsEmpty())
+		if (GEditor->GetSelectedActorCount() > 0)
 		{
-			UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::SelectedActor %s"), *GetNameSafe(SelectedActors[0]));
+			if (AActor* Actor = GEditor->GetSelectedActors()->GetTop<AActor>())
+			{
+				const FRotator Rot = UKismetMathLibrary::MakeRotFromZ(Actor->GetActorUpVector());
+
+				WorldToGravityTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
+				GravityToWorldTransform = WorldToGravityTransform.Inverse();
+		
+				ViewportClient->SetViewRotation(Rot);
+				UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::SelectedActor %s"), *GetNameSafe(Actor));
+			}
+
+
+			
 		}
 		return true;
 	}
