@@ -3,6 +3,7 @@
 
 #include "MyCustomEdMode.h"
 
+#include "Selection.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #define LOCTEXT_NAMESPACE "FSampleToolsEditorMode"
@@ -158,6 +159,16 @@ bool FMyCustomEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport*
 	{
 		bDisable = !bDisable;
 		UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::bDisable %d"), bDisable);
+		return true;
+	}
+	if (Event == IE_Pressed && Key == EKeys::M)
+	{
+		TArray<UObject*> SelectedActors;
+		GEditor->GetSelectedActors()->GetSelectedObjects( SelectedActors );
+		if (!SelectedActors.IsEmpty())
+		{
+			UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::SelectedActor %s"), *GetNameSafe(SelectedActors[0]));
+		}
 		return true;
 	}
 	return false;
