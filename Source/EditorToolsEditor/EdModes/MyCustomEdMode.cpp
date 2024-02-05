@@ -33,84 +33,43 @@ bool FMyCustomEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewp
 {
 	//TODO check RMB pressed
 
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::CameraRot %s"), *InViewportClient->GetViewRotation().ToString());
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputDelta %s %s"), *InDrag.ToString(), *InRot.ToString());
-
-	if (bDisable)
-	{
-		return false;
-	}
-
-	if (InRot.IsNearlyZero())
-	{
-		return false;
-	}
-
 	
+	if( InViewportClient->GetCurrentWidgetAxis() != EAxisList::None || bDisable || InRot.IsNearlyZero())
+	{
+		return false;
+	}
+		
+	//UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::WidgetAxis %d"), (int)InViewportClient->GetCurrentWidgetAxis());
+	//UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::CameraRot %s"), *InViewportClient->GetViewRotation().ToString());
+	//UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputDelta %s %s"), *InDrag.ToString(), *InRot.ToString());
 
 	FRotator ViewRotation = InViewportClient->GetViewRotation();
-
-	ViewRotation = (GravityToWorldTransform * ViewRotation.Quaternion()).Rotator();
-	
+	ViewRotation = (NewUpToWorldTransform * ViewRotation.Quaternion()).Rotator();
 	ViewRotation += FRotator( InRot.Pitch, InRot.Yaw, InRot.Roll );
 	// normalize to -180 to 180
 	ViewRotation.Pitch = FRotator::NormalizeAxis(ViewRotation.Pitch);
 	// Make sure its withing  +/- 90 degrees (minus a small tolerance to avoid numerical issues w/ camera orientation conversions later on).
-	ViewRotation.Pitch = FMath::Clamp( ViewRotation.Pitch, -90.f+KINDA_SMALL_NUMBER, 90.f-KINDA_SMALL_NUMBER );
-
-	ViewRotation = (WorldToGravityTransform * ViewRotation.Quaternion()).Rotator();
+	ViewRotation.Pitch = FMath::Clamp( ViewRotation.Pitch, -90.f+1, 90.f-1 );
+	ViewRotation = (WorldToNewUpTransform * ViewRotation.Quaternion()).Rotator();
 
 	
-	//ViewRotation = (ViewRotation.Quaternion() * FQuat(FVector::UpVector, FMath::DegreesToRadians(InRot.Yaw))).Rotator();
-	//InViewportClient->SetViewRotation(ViewRotation);
-
-	//ViewRotation = InViewportClient->GetViewRotation();
-	//ViewRotation = (ViewRotation.Quaternion() * FQuat(FVector::RightVector, FMath::DegreesToRadians(-InRot.Pitch))).Rotator();
-
+	FRotator OldViewRotation = InViewportClient->GetViewRotation();
+	OldViewRotation += FRotator( InRot.Pitch, InRot.Yaw, InRot.Roll );
 	// normalize to -180 to 180
-	//ViewRotation.Yaw = FRotator::NormalizeAxis(ViewRotation.Yaw);
-	//ViewRotation.Yaw = FMath::Clamp(ViewRotation.Yaw, 0.f+KINDA_SMALL_NUMBER, 175.f-KINDA_SMALL_NUMBER);
-	InViewportClient->SetViewRotation(ViewRotation);
-	
-	//InViewportClient->PeformDefaultCameraMovement(InDrag, InRot, InScale);
+	OldViewRotation.Pitch = FRotator::NormalizeAxis(OldViewRotation.Pitch);
+	// Make sure its withing  +/- 90 degrees (minus a small tolerance to avoid numerical issues w/ camera orientation conversions later on).
+	OldViewRotation.Pitch = FMath::Clamp( OldViewRotation.Pitch, -90.f+KINDA_SMALL_NUMBER, 90.f-KINDA_SMALL_NUMBER );
 
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::CameraRot %s"), *InViewportClient->GetViewRotation().ToString());
-	
-	return true;
-	
-	auto ViewTransform = InViewportClient->GetViewTransform();
-	FTransform Transform(ViewTransform.GetRotation(), ViewTransform.GetLocation());
+	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::ViewRotation %s"), *ViewRotation.ToString());
+	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::OldViewRotation %s"), *OldViewRotation.ToString());
 
-	FQuat NewQuat = ViewTransform.GetRotation().Quaternion() * FQuat(0,1,0,InRot.Yaw);
+	//return false;
 
-	FRotator Roll(0, 0, 90);
-	Transform.Rotator() = Roll;
-	FRotator TestRot = Transform.InverseTransformRotation(FRotator(0, 10, 0).Quaternion()).Rotator();
-	TestRot = (Roll.Quaternion() * FQuat(FVector::UpVector, FMath::DegreesToRadians(10))).Rotator();
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::TestRot %s %s"), *TestRot.ToString(), *Roll.Quaternion().ToString());
-
-	//FRotator Rot = UKismetMathLibrary::MakeRotationFromAxes(FVector::DownVector, FVector::RightVector, FVector::ForwardVector);
-
-	FVector OverrideUp = FVector::ForwardVector;
-	FVector OverrideForward = FVector::DownVector;
-	FVector OverrideRight = FVector::RightVector;
-	
-	FRotator FinalRot = (ViewTransform.GetRotation().Quaternion() * FQuat(OverrideForward, FMath::DegreesToRadians(InRot.Yaw))).Rotator();
-	FinalRot = (FinalRot.Quaternion() * FQuat(FVector::RightVector, FMath::DegreesToRadians(InRot.Pitch))).Rotator();
-	
-	FRotator DeltaRot = FinalRot - ViewTransform.GetRotation();
+	FRotator DeltaRot = ViewRotation - InViewportClient->GetViewRotation();
 	DeltaRot.Normalize();
-
 	InViewportClient->PeformDefaultCameraMovement(InDrag, DeltaRot, InScale);
-
-	//FinalRot = (ViewTransform.GetRotation().Quaternion() * FQuat(FVector::RightVector, FMath::DegreesToRadians(InRot.Pitch))).Rotator();
-	//DeltaRot = FinalRot - ViewTransform.GetRotation();
-	//DeltaRot.Normalize();
-	//InViewportClient->PeformDefaultCameraMovement(InDrag, DeltaRot, InScale);
-
+	//InViewportClient->SetViewRotation(ViewRotation);
 	
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::InputDelta %s %s"), *InDrag.ToString(), *InRot.ToString());
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::Transform %s %s"), *ViewTransform.GetRotation().ToString(), *Transform.GetRotation().Rotator().ToString());
 	return true;
 }
 
@@ -136,8 +95,8 @@ bool FMyCustomEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport*
 	{
 		FRotator Rot = UKismetMathLibrary::MakeRotationFromAxes(FVector::ForwardVector, FVector::UpVector, FVector::RightVector);
 
-		WorldToGravityTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
-		GravityToWorldTransform = WorldToGravityTransform.Inverse();
+		WorldToNewUpTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
+		NewUpToWorldTransform = WorldToNewUpTransform.Inverse();
 		
 		ViewportClient->SetViewRotation(Rot);
 		return true;
@@ -146,8 +105,8 @@ bool FMyCustomEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport*
 	{
 		FRotator Rot = UKismetMathLibrary::MakeRotationFromAxes(FVector::ForwardVector, -FVector::RightVector, FVector::DownVector);
 
-		WorldToGravityTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
-		GravityToWorldTransform = WorldToGravityTransform.Inverse();
+		WorldToNewUpTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
+		NewUpToWorldTransform = WorldToNewUpTransform.Inverse();
 		
 		ViewportClient->SetViewRotation(Rot);
 		return true;
@@ -170,15 +129,12 @@ bool FMyCustomEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport*
 			{
 				const FRotator Rot = UKismetMathLibrary::MakeRotFromZ(Actor->GetActorUpVector());
 
-				WorldToGravityTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
-				GravityToWorldTransform = WorldToGravityTransform.Inverse();
+				WorldToNewUpTransform = FQuat::FindBetweenNormals(FVector::UpVector, Rot.Quaternion().GetUpVector());
+				NewUpToWorldTransform = WorldToNewUpTransform.Inverse();
 		
 				ViewportClient->SetViewRotation(Rot);
 				UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::SelectedActor %s"), *GetNameSafe(Actor));
 			}
-
-
-			
 		}
 		return true;
 	}

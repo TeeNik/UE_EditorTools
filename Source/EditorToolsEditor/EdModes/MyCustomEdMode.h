@@ -12,13 +12,14 @@ public:
 
 	FMyCustomEdMode();
 	virtual ~FMyCustomEdMode();
-	
+
+protected:
 	virtual void Enter() override;
 	virtual void ActorSelectionChangeNotify() override;
 	virtual bool InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag, FRotator& InRot, FVector& InScale) override;
 	virtual bool InputKey(FEditorViewportClient* ViewportClient, FViewport* Viewport, FKey Key, EInputEvent Event) override;
 
 	bool bDisable = false;
-	FQuat WorldToGravityTransform;
-	FQuat GravityToWorldTransform;
+	FQuat WorldToNewUpTransform;
+	FQuat NewUpToWorldTransform;
 };
