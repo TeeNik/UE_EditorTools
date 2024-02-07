@@ -1,28 +1,27 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "CustomCameraRotationEdMode.h"
+#include "CustomCameraRotEdMode.h"
 #include "Selection.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#define LOCTEXT_NAMESPACE "FSampleToolsEditorMode"
+#define LOCTEXT_NAMESPACE "FCustomCameraRotEditorMode"
 
-const FEditorModeID FCustomCameraRotationEdMode::EM_MyCustomEditorModeId = TEXT("EM_MyCustomEditorMode");
+const FEditorModeID FCustomCameraRotEdMode::EM_CustomCameraRotEdModeId = TEXT("EM_CustomCameraRotEditorMode");
 
-FCustomCameraRotationEdMode::FCustomCameraRotationEdMode()
+FCustomCameraRotEdMode::FCustomCameraRotEdMode()
 {
-	Info = FEditorModeInfo(FCustomCameraRotationEdMode::EM_MyCustomEditorModeId,
-		LOCTEXT("SMyCustomEditorModeName", "MyCustomEditorMode"),
+	Info = FEditorModeInfo(FCustomCameraRotEdMode::EM_CustomCameraRotEdModeId,
+		LOCTEXT("CustomCameraRotEditorModeName", "CustomCameraRotEditorMode"),
 		FSlateIcon(),
 		true);
 }
 
 
-FCustomCameraRotationEdMode::~FCustomCameraRotationEdMode()
+FCustomCameraRotEdMode::~FCustomCameraRotEdMode()
 {
 }
 
-bool FCustomCameraRotationEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag, FRotator& InRot, FVector& InScale)
+bool FCustomCameraRotEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag, FRotator& InRot, FVector& InScale)
 {
 	if( InViewportClient->GetCurrentWidgetAxis() != EAxisList::None || InRot.IsNearlyZero())
 	{
@@ -47,7 +46,7 @@ bool FCustomCameraRotationEdMode::InputDelta(FEditorViewportClient* InViewportCl
 	return true;
 }
 
-bool FCustomCameraRotationEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport* Viewport, FKey Key, EInputEvent Event)
+bool FCustomCameraRotEdMode::InputKey(FEditorViewportClient* ViewportClient, FViewport* Viewport, FKey Key, EInputEvent Event)
 {
 	if (Event == IE_Pressed && Key == EKeys::M)
 	{
@@ -66,25 +65,25 @@ bool FCustomCameraRotationEdMode::InputKey(FEditorViewportClient* ViewportClient
 	return false;
 }
 
-void FCustomCameraRotationEdMode::UpdateNewUpTransforms(const FVector& NewUp)
+void FCustomCameraRotEdMode::UpdateNewUpTransforms(const FVector& NewUp)
 {
 	WorldToNewUpTransform = FQuat::FindBetweenNormals(FVector::UpVector, NewUp);
 	NewUpToWorldTransform = WorldToNewUpTransform.Inverse();
 }
 
-void FCustomCameraRotationEdMode::Enter()
+void FCustomCameraRotEdMode::Enter()
 {
 	FEdMode::Enter();
 
 	UpdateNewUpTransforms(FVector::UpVector);
 }
 
-void FCustomCameraRotationEdMode::Exit()
+void FCustomCameraRotEdMode::Exit()
 {
 	FEdMode::Exit();
 }
 
-bool FCustomCameraRotationEdMode::ReceivedFocus(FEditorViewportClient* ViewportClient, FViewport* Viewport)
+bool FCustomCameraRotEdMode::ReceivedFocus(FEditorViewportClient* ViewportClient, FViewport* Viewport)
 {
 	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::ReceivedFocus"));
 	return false;

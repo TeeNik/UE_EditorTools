@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "EdMode.h"
 
-class EDITORTOOLSEDITOR_API FCustomCameraRotationEdMode : public FEdMode, public ILegacyEdModeViewportInterface
+class EDITORTOOLSEDITOR_API FCustomCameraRotEdMode : public FEdMode, public ILegacyEdModeViewportInterface
 {
 public:
-	const static FEditorModeID EM_MyCustomEditorModeId;
+	const static FEditorModeID EM_CustomCameraRotEdModeId;
 
-	FCustomCameraRotationEdMode();
-	virtual ~FCustomCameraRotationEdMode();
+	FCustomCameraRotEdMode();
+	virtual ~FCustomCameraRotEdMode();
 
 protected:
 	virtual void Enter() override;

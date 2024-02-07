@@ -1,7 +1,7 @@
 #include "EditorToolsEditor.h"
 #include "ISettingsModule.h"
 #include "EditorTools/WorldObjects/SpotComponent.h"
-#include "EdModes/CustomCameraRotationEdMode.h"
+#include "EdModes/CustomCameraRotEdMode.h"
 #include "Modules/ModuleManager.h"
 #include "Modules/ModuleInterface.h"
 #include "Subsystems/ActorReplacementSettings.h"
@@ -34,9 +34,9 @@ void FEditorToolsEditorModule::StartupModule()
 			GetMutableDefault<UActorReplacementSettings>());
 	}
 
-	FEditorModeRegistry::Get().RegisterMode<FCustomCameraRotationEdMode>(
-		FCustomCameraRotationEdMode::EM_MyCustomEditorModeId,
-		FText::FromString("Example Editor Mode"),
+	FEditorModeRegistry::Get().RegisterMode<FCustomCameraRotEdMode>(
+		FCustomCameraRotEdMode::EM_CustomCameraRotEdModeId,
+		FText::FromString("Custom Camera Rot"),
 		FSlateIcon(),
 		true, 500
 		);
