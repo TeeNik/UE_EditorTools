@@ -11,13 +11,10 @@ public:
 	const static FEditorModeID EM_CustomCameraRotEdModeId;
 
 	FCustomCameraRotEdMode();
-	virtual ~FCustomCameraRotEdMode();
 
 protected:
 	virtual void Enter() override;
 	virtual void Exit() override;
-	virtual bool ReceivedFocus(FEditorViewportClient* ViewportClient, FViewport* Viewport) override;
-
 	
 	virtual bool InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag, FRotator& InRot, FVector& InScale) override;
 	virtual bool InputKey(FEditorViewportClient* ViewportClient, FViewport* Viewport, FKey Key, EInputEvent Event) override;
@@ -26,4 +23,6 @@ protected:
 	
 	FQuat WorldToNewUpTransform;
 	FQuat NewUpToWorldTransform;
+
+	FEditorViewportClient* AdjustedViewportClient = nullptr;
 };

@@ -16,9 +16,20 @@ FCustomCameraRotEdMode::FCustomCameraRotEdMode()
 		true);
 }
 
-
-FCustomCameraRotEdMode::~FCustomCameraRotEdMode()
+void FCustomCameraRotEdMode::Enter()
 {
+	FEdMode::Enter();
+	UpdateNewUpTransforms(FVector::UpVector);
+}
+
+void FCustomCameraRotEdMode::Exit()
+{
+	if (AdjustedViewportClient)
+	{
+		const FRotator Rot = UKismetMathLibrary::MakeRotFromZ(FVector::UpVector);
+		AdjustedViewportClient->SetViewRotation(Rot);
+	}
+	FEdMode::Exit();
 }
 
 bool FCustomCameraRotEdMode::InputDelta(FEditorViewportClient* InViewportClient, FViewport* InViewport, FVector& InDrag, FRotator& InRot, FVector& InScale)
@@ -35,7 +46,8 @@ bool FCustomCameraRotEdMode::InputDelta(FEditorViewportClient* InViewportClient,
 	// normalize to -180 to 180
 	ViewRotation.Pitch = FRotator::NormalizeAxis(ViewRotation.Pitch);
 	// Make sure its withing  +/- 90 degrees (minus a small tolerance to avoid numerical issues w/ camera orientation conversions later on).
-	ViewRotation.Pitch = FMath::Clamp( ViewRotation.Pitch, -90.f+1, 90.f-1 );
+	constexpr float OffsetToPreventRollOverflow = 1.0f;
+	ViewRotation.Pitch = FMath::Clamp(ViewRotation.Pitch, -90.f + OffsetToPreventRollOverflow, 90.f - OffsetToPreventRollOverflow);
 	
 	ViewRotation = (WorldToNewUpTransform * ViewRotation.Quaternion()).Rotator();
 
@@ -58,6 +70,8 @@ bool FCustomCameraRotEdMode::InputKey(FEditorViewportClient* ViewportClient, FVi
 				UpdateNewUpTransforms(Actor->GetActorUpVector());
 				const FRotator Rot = UKismetMathLibrary::MakeRotFromZ(Actor->GetActorUpVector());
 				ViewportClient->SetViewRotation(Rot);
+
+				AdjustedViewportClient = ViewportClient;
 			}
 		}
 		return true;
@@ -69,24 +83,6 @@ void FCustomCameraRotEdMode::UpdateNewUpTransforms(const FVector& NewUp)
 {
 	WorldToNewUpTransform = FQuat::FindBetweenNormals(FVector::UpVector, NewUp);
 	NewUpToWorldTransform = WorldToNewUpTransform.Inverse();
-}
-
-void FCustomCameraRotEdMode::Enter()
-{
-	FEdMode::Enter();
-
-	UpdateNewUpTransforms(FVector::UpVector);
-}
-
-void FCustomCameraRotEdMode::Exit()
-{
-	FEdMode::Exit();
-}
-
-bool FCustomCameraRotEdMode::ReceivedFocus(FEditorViewportClient* ViewportClient, FViewport* Viewport)
-{
-	UE_LOG(LogTemp, Log, TEXT("FMyCustomEdMode::ReceivedFocus"));
-	return false;
 }
 
 #undef LOCTEXT_NAMESPACE
