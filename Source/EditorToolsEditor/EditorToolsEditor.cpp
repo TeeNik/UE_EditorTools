@@ -46,6 +46,7 @@ void FEditorToolsEditorModule::ShutdownModule()
 {
     UE_LOG(EditorToolsEditor, Warning, TEXT("FEditorToolsEditor: Log Ended"));
 
+	FEditorModeRegistry::Get().UnregisterMode(FCustomCameraRotEdMode::EM_CustomCameraRotEdModeId);
 	UnregisterComponentVisualizers();
 }
 
