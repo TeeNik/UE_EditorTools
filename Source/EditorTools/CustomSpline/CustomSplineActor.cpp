@@ -2,26 +2,24 @@
 
 
 #include "CustomSplineActor.h"
+#include "CustomSplineComponent.h"
+#include "CustomSplineMetadata.h"
 
-// Sets default values
 ACustomSplineActor::ACustomSplineActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	SplineMetadata = CreateDefaultSubobject<UCustomSplineMetadata>(TEXT("CustomSplineMetadata"));
+	SplineMetadata->Reset(2);
+	SplineMetadata->AddPoint(0.0f);
+	SplineMetadata->AddPoint(1.0f);
+
+	SplineComponent = CreateDefaultSubobject<UCustomSplineComponent>(TEXT("CustomSplineComponen"));
+	SetRootComponent(SplineComponent);
 }
 
-// Called when the game starts or when spawned
-void ACustomSplineActor::BeginPlay()
+UCustomSplineMetadata* ACustomSplineActor::GetSplineMetadata() const
 {
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ACustomSplineActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	return SplineMetadata;
 }
 

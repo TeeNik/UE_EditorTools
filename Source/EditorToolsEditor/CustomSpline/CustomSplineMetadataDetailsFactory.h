@@ -4,13 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "SplineMetadataDetailsFactory.h"
-#include "CustomSplineMetadataDetails.generated.h"
+#include "CustomSplineMetadataDetailsFactory.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
-class EDITORTOOLSEDITOR_API UCustomSplineMetadataDetails : public USplineMetadataDetailsFactoryBase
+class EDITORTOOLSEDITOR_API UCustomSplineMetadataDetailsFactory : public USplineMetadataDetailsFactoryBase
 {
 	GENERATED_BODY()
 	

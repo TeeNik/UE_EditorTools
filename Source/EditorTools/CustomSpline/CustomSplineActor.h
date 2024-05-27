@@ -6,21 +6,23 @@
 #include "GameFramework/Actor.h"
 #include "CustomSplineActor.generated.h"
 
+class UCustomSplineComponent;
+class UCustomSplineMetadata;
+
 UCLASS()
 class EDITORTOOLS_API ACustomSplineActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ACustomSplineActor();
+	UCustomSplineMetadata* GetSplineMetadata() const;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+private:
+	UPROPERTY(Instanced, Export)
+	UCustomSplineMetadata* SplineMetadata = nullptr;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere)
+	UCustomSplineComponent* SplineComponent = nullptr;
 
 };

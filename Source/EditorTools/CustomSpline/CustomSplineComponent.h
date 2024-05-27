@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SplineComponent.h"
 #include "CustomSplineComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class EDITORTOOLS_API UCustomSplineComponent : public UActorComponent
+class EDITORTOOLS_API UCustomSplineComponent : public USplineComponent
 {
 	GENERATED_BODY()
 
