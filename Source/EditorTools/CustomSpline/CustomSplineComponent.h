@@ -7,22 +7,31 @@
 #include "CustomSplineComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+USTRUCT()
+struct FCustomSplinePointParams
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	float TestFloat = 1.0f;
+	
+};
+
+UCLASS(meta=(BlueprintSpawnableComponent))
 class EDITORTOOLS_API UCustomSplineComponent : public USplineComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
-	UCustomSplineComponent();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	virtual USplineMetadata* GetSplinePointsMetadata() override;
+	virtual const USplineMetadata* GetSplinePointsMetadata() const override;
+	virtual void PostLoad() override;
+	virtual void PostDuplicate(bool bDuplicateForPie) override;
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditImport() override;
+#endif
+	void FixupPoints();
 		
 };

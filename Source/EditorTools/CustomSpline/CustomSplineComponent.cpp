@@ -1,34 +1,60 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CustomSplineComponent.h"
+#include "CustomSplineActor.h"
+#include "CustomSplineMetadata.h"
 
-// Sets default values for this component's properties
-UCustomSplineComponent::UCustomSplineComponent()
+USplineMetadata* UCustomSplineComponent::GetSplinePointsMetadata()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	if (ACustomSplineActor* Actor = Cast<ACustomSplineActor>(GetOwner()))
+	{
+		return Actor->GetSplineMetadata();
+	}
+	return nullptr;
 }
 
-
-// Called when the game starts
-void UCustomSplineComponent::BeginPlay()
+const USplineMetadata* UCustomSplineComponent::GetSplinePointsMetadata() const
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	if (ACustomSplineActor* Actor = Cast<ACustomSplineActor>(GetOwner()))
+	{
+		return Actor->GetSplineMetadata();
+	}
+	return nullptr;
 }
 
-
-// Called every frame
-void UCustomSplineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCustomSplineComponent::FixupPoints()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+#if WITH_EDITORONLY_DATA
+	if (GetSplinePointsMetadata())
+	{
+		const int32 NumPoints = GetNumberOfSplinePoints();
+		GetSplinePointsMetadata()->Fixup(NumPoints, this);
+	}
+#endif
 }
 
+void UCustomSplineComponent::PostLoad()
+{
+	Super::PostLoad();
+	FixupPoints();
+}
+
+void UCustomSplineComponent::PostDuplicate(bool bDuplicateForPie)
+{
+	Super::PostDuplicate(bDuplicateForPie);
+	FixupPoints();
+}
+
+#if WITH_EDITOR
+void UCustomSplineComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	FixupPoints();
+}
+
+void UCustomSplineComponent::PostEditImport()
+{
+	Super::PostEditImport();
+	FixupPoints();
+}
+#endif
