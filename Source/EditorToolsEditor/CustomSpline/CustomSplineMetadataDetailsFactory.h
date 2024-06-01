@@ -6,6 +6,7 @@
 #include "SplineMetadataDetailsFactory.h"
 #include "CustomSplineMetadataDetailsFactory.generated.h"
 
+class UCustomSplineMetadata;
 
 UCLASS()
 class EDITORTOOLSEDITOR_API UCustomSplineMetadataDetailsFactory : public USplineMetadataDetailsFactoryBase

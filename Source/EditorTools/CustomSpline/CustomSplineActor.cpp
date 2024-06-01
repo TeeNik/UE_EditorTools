@@ -23,3 +23,11 @@ UCustomSplineMetadata* ACustomSplineActor::GetSplineMetadata() const
 	return SplineMetadata;
 }
 
+float ACustomSplineActor::GetTestFloatAtSplinePoint(int32 PointIndex) const
+{
+	if (ensure(SplineMetadata) && ensure(SplineMetadata->PointParams.IsValidIndex(PointIndex)))
+	{
+		return SplineMetadata->PointParams[PointIndex].TestFloat;
+	}
+	return 0.0f;
+}

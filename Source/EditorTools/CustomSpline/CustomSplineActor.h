@@ -18,11 +18,15 @@ public:
 	ACustomSplineActor();
 	UCustomSplineMetadata* GetSplineMetadata() const;
 
+	UFUNCTION(BlueprintPure, Category = "CustomSplineActor")
+	float GetTestFloatAtSplinePoint(int32 PointIndex) const;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UCustomSplineComponent* SplineComponent = nullptr;
+
 private:
 	UPROPERTY(Instanced, Export)
 	UCustomSplineMetadata* SplineMetadata = nullptr;
-
-	UPROPERTY(VisibleAnywhere)
-	UCustomSplineComponent* SplineComponent = nullptr;
 
 };
